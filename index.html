@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Live Weather Forecast</title>
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />  
+    <meta name="theme-color" content="#2196f3" />
+    <meta
+      name="description"
+      content="Get real-time weather updates for your city using WeatherNow."
+    />
+    <meta
+      name="keywords"
+      content="weather, forecast, temperature, weather app, openweather"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <main class="weather-panel">
+      <header class="app-header">
+       <h1 class="app-title">🌤️ WeatherNow</h1>
+      </header>
+      <div
+        id="offlineBanner"
+        class="offline-banner hidden"
+        role="status"
+        aria-live="polite"
+      >
+        ⚠️ You’re offline. Weather updates won’t work.
+        <span class="close-banner" title="Dismiss offline notice" role="button" type="button">&times;</span>
+      </div>
+
+      <!-- Search -->
+      <form id="searchForm" class="search" autocomplete="off">
+        <input
+          id="searchInput"
+          aria-label="City name"
+          placeholder="Search city (e.g. Mumbai)"
+        />
+        <button aria-label="Search" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+      <p id="loading" hidden>Loading weather...</p>
+  
+      <!-- Error Message -->
+      <section class="not-found" hidden>
+        <p>City not found</p>
+      </section>
+
+      <!-- Weather Info -->
+      <section class="weather-card" hidden>
+       <div class="weather-top">
+        <div class="weather-left">
+          <h2 id="cityName" class="city-name"></h2>
+          <div id="weatherIcon" class="weather-icon">
+            <!-- SVG Icon goes here -->
+          </div>
+          <div class="temperature">
+            <span id="tempValue">25°C</span>
+            <p id="feels">Feels like 26°C</p>
+          </div>
+        </div>
+
+        <div class="weather-right">
+          <div class="desc-wrapper">
+            <div class="desc-text-group">
+              <p id="desc" class="desc">--</p>
+              <i
+                id="descInfoIcon"
+                class="fa-solid fa-circle-info desc-info-icon"
+                title="What does this mean?"
+                role="button"
+              ></i>
+            </div>
+            <div id="descPopup" class="desc-popup hidden" role="tooltip" aria-live="polite">
+              <p class="popup-text">
+                “Overcast clouds” refer to a sky completely covered by clouds.
+                It usually means dull weather, with very low sunlight and cooler
+                temperatures.
+              </p>
+            </div>
+          </div>
+
+          <div class="weather-details">
+            <div class="stat-row">
+              <div class="stat-item">
+                <i class="fa-solid fa-temperature-low" aria-hidden="true"></i>
+                <span class="label">Min</span>
+                <span id="min-temp"></span>
+              </div>
+              <div class="stat-item">
+                <i class="fa-solid fa-temperature-high"></i>
+                <span class="label">Max</span>
+                <span id="max-temp"></span>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-item">
+                <i class="fa-solid fa-droplet"></i>
+                <span class="label">Hum</span>
+                <span id="humidity"></span>
+              </div>
+              <div class="stat-item">
+                <i class="fa-solid fa-wind"></i>
+                <span class="label">Wind</span>
+                <span id="wind"></span>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-item">
+                <i class="fa-solid fa-sun"></i>
+                <span class="label">Rise</span>
+                <span id="sunrise"></span>
+              </div>
+              <div class="stat-item">
+                <i class="fa-solid fa-moon"></i>
+                <span class="label">Set</span>
+                <span id="sunset"></span>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-item">
+                <i class="fa-solid fa-cloud"></i>
+                <span class="label">Cloud</span>
+                <span id="clouds"></span>
+              </div>
+              <div class="stat-item">
+                <i class="fa-solid fa-eye"></i>
+                <span class="label">Vis</span>
+                <span id="visibility"></span>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-item aqi-item">
+                <i class="fa-solid fa-mask-ventilator"></i>
+                <span class="label">AQI</span>
+                <span
+                  id="aqiLabel"
+                  class="aqi-label"
+                  aria-label="Air Quality Index"
+                >
+                  <!-- JS will fill: label ● (level) -->
+                </span>
+              </div>
+            </div>
+            <p id="lastUpdated" class="last-updated">Last updated: --</p>
+          </div>
+        </div>
+       </div>
+        <!-- Illustration at the bottom -->
+        <div class="weather-illustration-container">
+          <img src="assets/sunny-beach.svg" alt="Sunny Weather Illustration" class="weather-illustration" loading="lazy" />
+        </div>
+      </section>
+    </main>
+    <noscript>
+     <p style="text-align:center;">⚠️ Please enable JavaScript to use WeatherNow properly.</p>
+    </noscript>
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">  
+     <p>Powered by  
+      <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeather</a>
+     </p>  
+    </footer>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
