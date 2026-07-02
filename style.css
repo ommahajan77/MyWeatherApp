@@ -1,0 +1,737 @@
+:root {
+  --brand-bg: #000;
+  --panel-bg: #fff;
+  --accent: #e6f5fb;
+  --radius: 12px;
+  --icon-color: #038cd6;
+  --text-dark: #333;
+  --text-muted: #555;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(to bottom, #a8dfff 0%, #d7f0ff 100%);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;     /* ✅ standard readable base */
+  line-height: 1.5;    /* ✅ balanced spacing */
+  color: #333;         /* ✅ ensure default text color */
+  padding: 0.5rem 1rem;
+  scroll-behavior: smooth;  /* ✅ smoother scrolling UX */
+}
+
+/* === Header === */
+.app-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  letter-spacing: 0.13rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer; /* Makes it look clickable */
+  transition: color 0.3s ease, letter-spacing 0.3s ease, transform 0.3s ease;
+}
+
+.app-title:hover {
+  color: #222;
+  letter-spacing: 0.15rem;
+  transform: translateY(-1px);
+}
+
+/* === offline-banner=== */
+.offline-banner {
+  position: relative; /* Needed for close button */
+  background-color: #fdf2f2;
+  color: #a94442;
+  padding: 0.4rem 1rem;
+  margin: 0.8rem auto;
+  min-height: 1.5rem;
+  max-width: 600px;
+  border: 1px solid #f5a4ac;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+.close-banner {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  width: 18px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1;
+  border: 1px solid #8b1a1a;
+  border-radius: 50%;
+  background-color: #fff;
+  color: #a94442;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.close-banner:hover {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* === Panel === */
+.weather-panel {
+  width: clamp(320px, 90vw, 640px);
+  padding:0.75rem 2rem;
+  border-radius: var(--radius);
+  background-color: #ffffff; /* ✅ fallback solid */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: padding 0.3s ease, background 0.3s ease;
+}
+
+/* === Search Form === */
+.search {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.search input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  background: rgba(240, 250, 255, 0.4);
+  color: #1a1a1a;
+  font-size: 1rem;
+  box-shadow: inset 1px 1px 1.5px rgba(255, 255, 255, 0.3),
+              0 2px 6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* ✅ narrowed */
+}
+
+.search input:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.search input:focus-visible {
+  outline: 2px solid #56baff;  /* ✅ visible focus */
+  outline-offset: 2px;
+}
+.search input::placeholder {
+  color: #555;
+  opacity: 0.7;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.search button {
+  width: 3rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08); /* subtle white */
+  border: 0.7px solid rgba(255, 255, 255, 0.61);
+  color: var(--icon-color);
+  cursor: pointer;
+  box-shadow: var(--main-glow);
+  backdrop-filter: blur(4px);
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#loading {
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* === States === */
+.not-found[hidden],
+.weather-card[hidden] {
+  display: none !important;
+}
+
+/* === Weather Card === */
+.weather-card {
+  position: relative;
+  display: flex;
+  flex-direction: column; /* stack top + illustration vertically */
+  width: 100%; /* Important to allow SVG to match full width */
+  max-width: clamp(320px, 90vw, 640px);
+  gap: 1.5rem;
+  padding: 1.5rem 1.5rem 0; /* top: 1.5rem, sides: 1.5rem, bottom: 0 */
+  box-sizing: border-box;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.7px solid rgba(255, 255, 255, 0.61);
+  box-shadow: var(--main-glow);
+  animation: fadeIn 0.4s ease-in-out;
+  transition: all 0.3s ease;
+  will-change: transform, opacity;  /* ✅ smoother animation rendering */
+  overflow: visible; /* prevent scrollbars */
+  overflow-x: hidden;
+}
+
+.weather-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 2rem;
+}
+/* Add this below your current .weather-illustration-container */
+
+.weather-illustration-container.popup-open {
+  transform: scaleX(1.157); /* reduces horizontal overflow temporarily */
+}
+
+/* Your existing .weather-left and .weather-right styles here */
+
+.weather-illustration-container {
+  width: 100%;
+  margin-top: -13.75rem; /* nice spacing from weather content */
+  display: flex;
+  justify-content: center;
+  transform: scaleX(1.2); /* tweak value (1.10–1.15) if needed */
+  transform-origin: center;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden; /* ensures scaled image doesn't overflow outside container */
+  z-index: 0;
+  transition: transform 0.3s ease-in-out;
+}
+@media (max-width: 768px) {
+  .weather-illustration-container {
+    margin-top: -10.5rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .weather-illustration-container {
+    margin-top: -8.8rem;
+  }
+}
+@media (max-width: 400px) {
+  .weather-illustration-container {
+    margin-top: -4rem;
+  }
+}
+
+.weather-illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.88;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+
+@media (max-width: 480px) {
+  .weather-illustration {
+    max-width: 300px;
+  }
+}
+/* === Left Panel === */
+.weather-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: auto 10px;
+  align-items: flex-start; /* center instead of flex-start */
+  text-align: center;
+  gap: 0.3rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+#weatherIcon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 0.5rem;
+}
+
+#weatherIcon img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.3); /* faint background */
+  /* Removed blur for performance */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* soft lift */
+}
+
+.temperature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+#tempValue {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+#feels {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.weather-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.last-updated {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);  /* like grey */
+  text-align: right;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* == Description heading == */
+#desc {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.22rem;
+  word-spacing: 4px;
+  color: var(--text-dark);
+  margin-bottom: 0.6rem;
+  width: 100%; /* full width of the right section */
+  max-width: 270px; /* match weather-details */
+  text-align: center; /* center inside box */
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.4);
+  padding-bottom: 0.3rem;
+  text-transform: capitalize;
+}
+
+.desc-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+/* Container for desc + info icon */
+.desc-text-group {
+  position: relative;
+  display: inline-block;
+  padding-right: 1.2rem; /* gives space so icon doesn't overlap text */
+}
+
+/* Description text */
+#desc.desc {
+  margin: 3;
+  font-weight: 500;
+}
+
+/* Info icon placed at top-right of desc */
+.desc-info-icon {
+  position: absolute;
+  top: -0.45rem;
+  right: 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--icon-color);
+  padding: 0.1rem 0.35rem;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.desc-info-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Popup box below the description */
+.desc-popup {
+  position: absolute;
+  bottom: 115%;
+  right: 0;
+  z-index: 300;
+  padding: 0.45rem 0.4rem;
+  width: clamp(100px, 50vw, 260px);
+  max-height: fit-content;
+  background: linear-gradient(to bottom right, #fefefe, #dddddd); /* soft gradient */
+  color: #111;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  box-sizing: border-box;
+  font-size: 0.82rem;
+  line-height: 1.1;
+  text-align: left;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* ✅ Solid side stripe on right, no glow or gradient */
+.desc-popup::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  right: 3px;
+  width: 6px;
+  background: rgba(134, 134, 134, 0.829);
+  border-radius: 1px var(--radius);
+  box-shadow: 0 4px 12px rgba(171, 255, 248, 0.85);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ✅ Matching pointer/arrow, same soft background tone */
+.desc-popup::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 4px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: #dddddd transparent transparent transparent;
+}
+
+.desc-popup.hidden {
+  display: none;
+}
+
+/* 📱 Responsive */
+@media (max-width: 420px) {
+  .desc-popup {
+    width: 90vw;
+    right: 50%;
+    transform: translateX(50%);
+  }
+}
+
+/* Weather details container */
+.weather-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 270px;
+}
+
+/* Individual stat card */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.25rem 0.35rem;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  flex: 1 1 min(45%, 180px);
+  min-height: 1.8rem;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px) scale(1.03);
+  background-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.stat-item i {
+  color: var(--icon-color);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.stat-item .label {
+  font-weight: 600;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 0.2rem;
+  opacity: 0.85;
+}
+
+.stat-item span:last-child {
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+/* === AQI Styles === */
+.aqi-item {
+  flex: 1 1 100%;
+  max-width: 250px;
+}
+
+@media (min-width: 500px) {
+  .aqi-item {
+    flex: 1 1 48%;  /* Make it behave like other stat-items */
+  }
+}
+/* AQI label section */
+.aqi-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding-left: 0.3rem;
+  color: var(--text-dark);
+}
+
+/* Colored circular dot */
+.aqi-badge {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  vertical-align: middle
+}
+
+/* Numeric AQI Level */
+.aqi-level {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* AQI levels – match color scale */
+.aqi-good { background-color: #2ecc71; }        /* Green */
+.aqi-satisfactory { background-color: #27ae60; } /* Dark green */
+.aqi-moderate { background-color: #f1c40f; }     /* Yellow */
+.aqi-poor { background-color: #e67e22; }         /* Orange */
+.aqi-very-poor { background-color: #e74c3c; }    /* Red */
+
+/* === Footer === */
+.footer {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: rgba(40, 40, 40, 0.6);  /* Higher contrast */
+  text-align: center;
+  padding-bottom: 1rem;
+  font-style: italic;
+}
+
+.footer a {
+  color: #444;
+  text-decoration: underline dotted;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #000;
+}
+
+/* === Responsive === */
+@media (max-width: 640px) {
+  .weather-card {
+    flex-direction: column; /* Keep weather-top and illustration stacked */
+    gap: 1.5rem;
+  }
+  .weather-top {
+    flex-wrap: nowrap; /* Keep them side-by-side */
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
+  .weather-right {
+    flex: 1 1 50%;
+    /*align-items: right;
+    text-align: center;*/
+    padding: 0;
+  }
+
+  .weather-details {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .stat-row {
+    /*display: flex;*/
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .stat-item {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 120px;
+    max-width: 180px;
+  }
+
+  #desc {
+    max-width: 100%;
+  }
+}
+
+/* max-width: 540px (phones landscape / small phones) */
+@media (max-width: 540px) {
+  .search {
+    flex-direction: row;
+    gap: 0.6rem;
+  }
+
+  .search input {
+    flex: 1;
+    font-size: 0.95rem;
+  }
+
+  .search button {
+    width: 2.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+
+  .weather-panel {
+    padding: 1.2rem;
+  }
+
+  .weather-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .weather-top {
+    flex-wrap: nowrap;
+    gap: 1rem;
+  }
+  .weather-right {
+    align-items: right;
+    text-align: center;
+  }
+  .weather-left {
+    align-items: left;
+    text-align: center;
+  }
+  #tempValue {
+    font-size: 2.3rem;
+  }
+
+  #desc {
+    font-size: 1.5rem;
+    letter-spacing: 0.15rem;
+    max-width: 100%;
+  }
+
+  .weather-details {
+    max-width: 100%;
+  }
+
+  .stat-row {
+    /*display: flex;*/
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .stat-item {
+    flex: 1 1 48%;
+    min-width: 115px;
+    max-width: 150px;
+  }
+
+  .footer {
+    font-size: 0.85rem;
+    padding-top: 1rem;
+  }
+}
+
+/* max-width: 400px (phones portrait) */
+@media (max-width: 400px) {
+  .weather-left,
+  .weather-right {
+    flex: 1 1 50%;
+    max-width: 50%;
+  }
+  .weather-details {
+    max-width: 100%;
+  }
+
+  .stat-row {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .stat-item {
+    flex: 1 1 48%;
+  }
+
+  #desc {
+    font-size: 1rem;
+    letter-spacing: 0.15rem;
+  }
+}
+
+/* max-width: 380px (extra small devices) */
+@media (max-width: 380px) {
+  .stat-item {
+    flex: 1 1 100%;
+  }
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade {
+  animation: fadeIn 0.4s ease-in-out;
+}
